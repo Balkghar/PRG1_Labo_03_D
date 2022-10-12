@@ -14,6 +14,7 @@ Compilateur :     Mingw-w64 g++ 12.1.0
 #include <iostream>
 #include <iomanip>
 #include <limits>
+#include <cmath>
 
 #define VIDER_BUFFER cin.ignore(numeric_limits<streamsize>::max(),'\n')
 
@@ -42,10 +43,19 @@ int main() {
    int          nbr_bagage;
    int          nbr_km;
    int          h_depart;
+   int          min_depart;
+   int          h_arrivee;
+   int          min_arrivee;
+   int          temps_h;
+   int          temps_min;
+   int          temp_total_min;
+   int          min_jour;
+   int          min_nuit;
    double       prix_tot_bagages;
-   double       prix_km;
+   double       prix_trajet;
    double       prix_total;
    double       vitesse_moyenne;
+   double       temps_trajets;
 
    // Affichage de 2 décimales après la virgule
    cout << fixed << setprecision(DECIMALES);
@@ -114,18 +124,41 @@ int main() {
    }
 
    // Calculs des sous-totaux
-   prix_tot_bagages    = nbr_bagage * TAXE_BAGAGE;
+   prix_tot_bagages = nbr_bagage * TAXE_BAGAGE;
 
    // Si l'heure de départ est entre 8h et 20h le tarif de jour est appliqué.
    // Dans le cas contraire, le tarif de nuit est appliqué.
+
+   //calcul le temps de trajet
+   temps_trajets = double(nbr_km/vitesse_moyenne);
+   temps_h = trunc(temps_trajets);
+   temps_min = round(double(temps_trajets - temps_h)*60);
+   temp_total_min = temps_h + temps_min;
+
+   //vérifie et calcul si le départ est en journée
    if (h_depart >= HEURE_JOUR_MIN and h_depart <= HEURE_JOUR_MAX){
-      prix_km = nbr_km * TARIF_JOUR;
+      //verifications si le temps de trajet dépasse sur le temps de nuit -- (h_depart - HEURE_JOUR_MIN) + double(min_depart/60) + temps_h + double(temps_min/60)
+      if((h_depart - HEURE_JOUR_MIN)*60 + min_depart +  temp_total_min > (HEURE_JOUR_MAX-HEURE_JOUR_MIN)*60){
+        //minute pour la première journée
+        min_jour = (HEURE_JOUR_MAX-HEURE_JOUR_MIN)*60 - (h_depart - HEURE_JOUR_MIN)*60;
+        //vérifie si le trajet dépasse le temps de nuit
+        if(temp_total_min - min_jour > (24 - HEURE_JOUR_MAX +HEURE_JOUR_MIN)*60 ){
+
+        }
+        else{
+         min_nuit = temp_total_min - min_jour;
+        }
+      }
+      //calcul le trajet si c'est uniquemnt en journée
+      else{
+        prix_trajet = (temps_h*60 + temps_min)*TARIF_JOUR;
+      }
    } else {
-      prix_km = nbr_km * TARIF_NUIT;
+      //prix_trajet = nbr_km * TARIF_NUIT;
    }
 
    // Calcul du prix total
-   prix_total = TAXE_BASE + prix_tot_bagages + prix_km;
+   prix_total = TAXE_BASE + prix_tot_bagages + prix_trajet;
 
 
 
@@ -135,7 +168,7 @@ int main() {
    cout << "============" << endl;
    cout << "Prise en charge      : " << setw(LARGEUR) << TAXE_BASE         << " Euros" << endl;
    cout << "Supplements bagages  : " << setw(LARGEUR) << prix_tot_bagages  << " Euros" << endl;
-   cout << "Prix du trajet       : " << setw(LARGEUR) << prix_km           << " Euros" << endl;
+   cout << "Prix du trajet       : " << setw(LARGEUR) << prix_trajet           << " Euros" << endl;
    cout << "Prix TOTAL           : " << setw(LARGEUR) << prix_total        << " Euros" << endl;
 
 
