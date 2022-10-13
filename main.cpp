@@ -29,10 +29,8 @@ int main() {
    const double TARIF_NUIT       = 1.60;
    const int    LARGEUR          = 6;
    const int    DECIMALES        = 2;
-   const int    HEURE_MIN        = 0;
-   const int    HEURE_MAX        = 23;
    const int    V_MAX            = 120;
-   const int    V_MIN            = 50;
+   const int    V_MIN            = 30;
    const int    DISTANCE_MIN     = 0;
    const int    DISTANCE_MAX     = 500;
    const int    BAGAGE_MIN       = 0;
@@ -58,11 +56,14 @@ int main() {
    int          temps_journee;   //total minutes pour la journéee
    int          temps_nuit;      //total minutes pour la nuit
    double       prix_tot_bagages;
+   double       prix_trajet_jour;
+   double       prix_trajet_nuit;
    double       prix_trajet;
    double       prix_total;
    double       vitesse_moyenne;
    double       temps_trajets;
-
+   string       hour_depart;
+   string       minute_depart;
    // Affichage de 2 décimales après la virgule
    cout << fixed << setprecision(DECIMALES);
 
@@ -79,14 +80,25 @@ int main() {
    cout << "Taxe par bagage   : "    << setw(LARGEUR) << TAXE_BAGAGE    << " Euros" << endl;
    cout << "Tarif jour        : "    << setw(LARGEUR) << TARIF_JOUR     << " Euros" << endl;
    cout << "Tarif nuit        : "    << setw(LARGEUR) << TARIF_NUIT     << " Euros" << endl;
-   cout << "Heure du jour     :   [" << HEURE_MIN << " - " << HEURE_MAX << "]" << endl << endl;
+   if(MINUTE_JOUR_MAX < 10 && MINUTE_JOUR_MIN < 10){
+      cout << "Tarif jour        :   " << HEURE_JOUR_MIN << "h0" << MINUTE_JOUR_MIN <<" - " << HEURE_JOUR_MAX << "h0" << MINUTE_JOUR_MAX<< "" << endl << endl;
+   }
+   else if(MINUTE_JOUR_MAX < 10){
+      cout << "Tarif jour        :   " << HEURE_JOUR_MIN << "h" << MINUTE_JOUR_MIN <<" - " << HEURE_JOUR_MAX << "h0" << MINUTE_JOUR_MAX<< "" << endl << endl;
+   }
+   else if(MINUTE_JOUR_MIN < 10){
+      cout << "Tarif jour        :   " << HEURE_JOUR_MIN << "h0" << MINUTE_JOUR_MIN <<" - " << HEURE_JOUR_MAX << "h" << MINUTE_JOUR_MAX<< "" << endl << endl;
+   }
+   else{
+      cout << "Tarif jour        :   " << HEURE_JOUR_MIN << "h" << MINUTE_JOUR_MIN <<" - " << HEURE_JOUR_MAX << "h" << MINUTE_JOUR_MAX<< "" << endl << endl;
+   }
 
 
    // Entrées utilisateur et vérification des valeurs
    cout << "Votre commande" << endl;
    cout << "==============" << endl;
    cout << "Veuillez entrer le nombre de bagages           ["
-        << BAGAGE_MIN << " - " << BAGAGE_MAX << "]:";
+        << BAGAGE_MIN << " - " << BAGAGE_MAX << "]  : ";
    cin  >> nbr_bagage;
    VIDER_BUFFER;
 
@@ -97,7 +109,7 @@ int main() {
    }
 
    cout << "Veuillez entrer la distance en KM              ["
-        << DISTANCE_MIN << " - " << DISTANCE_MAX << "]:";
+        << DISTANCE_MIN << " - " << DISTANCE_MAX << "]: ";
    cin  >> nbr_km;
    VIDER_BUFFER;
 
@@ -108,7 +120,7 @@ int main() {
    }
 
    cout << "Veuillez entrer la vitesse moyenne en KM/H     ["
-        << V_MIN << "-" << V_MAX <<"]: ";
+        << V_MIN << "-" << V_MAX <<"] : ";
    cin  >> vitesse_moyenne;
    VIDER_BUFFER;
 
@@ -118,28 +130,22 @@ int main() {
       return EXIT_SUCCESS;
    }
 
-   cout << "Veuillez entrer l'heure de depart              ["
-        << HEURE_MIN << "-" << HEURE_MAX << "]: ";
-   cin  >> h_depart;
-   VIDER_BUFFER;
+   cout << "Veuillez entrer l'heure de départ              [hh:mm]  : ";
 
-   if (h_depart < HEURE_MIN or h_depart > HEURE_MAX){
-      cout << "Valeur incorrecte. Presser ENTER pour quitter" << endl;
-      VIDER_BUFFER;
-      return EXIT_SUCCESS;
-   }
-
+   getline(cin, hour_depart, ':');
+   getline(cin, minute_depart);
+   h_depart = stoi(hour_depart);
+   min_depart = stoi(minute_depart);
+   
    // Calculs des sous-totaux
    prix_tot_bagages = nbr_bagage * TAXE_BAGAGE;
 
-   // Si l'heure de départ est entre 8h et 20h le tarif de jour est appliqué.
-   // Dans le cas contraire, le tarif de nuit est appliqué.
 
    //calcul le temps de trajet total en minutes
    temps_trajets = double(nbr_km/vitesse_moyenne);
    temps_h = trunc(temps_trajets);
    temps_min = round(double(temps_trajets - temps_h)*60);
-   temp_total_min = temps_h + temps_min;
+   temp_total_min = (temps_h)*60 + temps_min;
    //calcul du temps minute en journée
    temps_journee = (HEURE_JOUR_MAX-HEURE_JOUR_MIN)*60;
    temps_journee += MINUTE_JOUR_MAX-MINUTE_JOUR_MIN;
@@ -167,12 +173,33 @@ int main() {
       else{
         min_jour = temp_total_min;
       }
+   }
    //si le départ est de nuit
-   } else {
+   else {
+      //vérifie si le trajet dépasse l'heure de nuit
+      if((24 - h_depart)*60 + min_depart +  temp_total_min > temps_nuit){
+         min_nuit = temps_nuit - ((24 - h_depart)*60 + min_depart);
+         //check s'il dépasse sur une autre journée et calcul en conséquence
+         if(temp_total_min - min_nuit > temps_journee){
+            min_jour = temps_journee;
+            min_nuit += temp_total_min - min_nuit - temps_journee;
+         }
+         //calcul s'il ne dépasse pas
+         else{
+            min_jour = temp_total_min -min_nuit;
+         }
+      }
+      //calcul si c'est uniquement de nuit
+      else{
+         min_nuit = temp_total_min;
+      }
       //prix_trajet = nbr_km * TARIF_NUIT;
    }
 
    // Calcul du prix total
+   prix_trajet_jour = min_jour*TARIF_JOUR;
+   prix_trajet_nuit = min_nuit*TARIF_NUIT;
+   prix_trajet = prix_trajet_jour + prix_trajet_nuit; 
    prix_total = TAXE_BASE + prix_tot_bagages + prix_trajet;
 
 
@@ -183,8 +210,11 @@ int main() {
    cout << "============" << endl;
    cout << "Prise en charge      : " << setw(LARGEUR) << TAXE_BASE         << " Euros" << endl;
    cout << "Supplements bagages  : " << setw(LARGEUR) << prix_tot_bagages  << " Euros" << endl;
-   cout << "Prix du trajet       : " << setw(LARGEUR) << prix_trajet           << " Euros" << endl;
-   cout << "Prix TOTAL           : " << setw(LARGEUR) << prix_total        << " Euros" << endl;
+   cout << "Temps de course      : " << endl;
+   cout << " - " << min_jour << " @ " << TARIF_JOUR << "        : " << prix_trajet_jour << " Euros"<< endl;
+   cout << " - " << min_nuit << " @ " << TARIF_NUIT << "        : " << prix_trajet_nuit << " Euros" << endl;
+   cout << "-----------------------------------" << endl;
+   cout << "               TOTAL : " << setw(LARGEUR) << prix_total        << " Euros" << endl;
 
 
    // Confirmation de l'utilisateur pour quitter le programme
