@@ -55,6 +55,8 @@ int main() {
    int          temp_total_min;  //temps du trajet en minutes
    int          min_jour;        //total minutes de jour du trajet
    int          min_nuit;        //total minutes de nuit du trajet
+   int          temps_journee;   //total minutes pour la journéee
+   int          temps_nuit;      //total minutes pour la nuit
    double       prix_tot_bagages;
    double       prix_trajet;
    double       prix_total;
@@ -138,16 +140,23 @@ int main() {
    temps_h = trunc(temps_trajets);
    temps_min = round(double(temps_trajets - temps_h)*60);
    temp_total_min = temps_h + temps_min;
+   //calcul du temps minute en journée
+   temps_journee = (HEURE_JOUR_MAX-HEURE_JOUR_MIN)*60;
+   temps_journee += MINUTE_JOUR_MAX-MINUTE_JOUR_MIN;
+   //calcul du temps minute la nuit
+   temps_nuit = (24 - HEURE_JOUR_MAX +HEURE_JOUR_MIN)*60;
+   temps_nuit += MINUTE_JOUR_MIN-MINUTE_JOUR_MAX;
 
    //vérifie et calcul si le départ est en journée
    if (h_depart >= HEURE_JOUR_MIN and h_depart <= HEURE_JOUR_MAX){
       //verifications si le temps de trajet dépasse sur le temps de nuit -- (h_depart - HEURE_JOUR_MIN) + double(min_depart/60) + temps_h + double(temps_min/60)
-      if((h_depart - HEURE_JOUR_MIN)*60 + min_depart +  temp_total_min > (HEURE_JOUR_MAX-HEURE_JOUR_MIN)*60){
+      if(((h_depart - HEURE_JOUR_MIN)*60 + min_depart +  temp_total_min) > temps_journee){
         //minute pour la première journée
         min_jour = (HEURE_JOUR_MAX-HEURE_JOUR_MIN)*60 - (h_depart - HEURE_JOUR_MIN)*60;
-        //vérifie si le trajet dépasse le temps de nuit
-        if(temp_total_min - min_jour > (24 - HEURE_JOUR_MAX +HEURE_JOUR_MIN)*60 ){
-
+        //vérifie si le trajet dépasse le temps de nuit et si oui calcul en conséquence
+        if(temp_total_min - min_jour > temps_nuit){
+            min_nuit = temps_nuit;
+            min_jour += temp_total_min - min_jour - temps_nuit;
         }
         //si il ne dépasse passe pas, ajoute les minute à la nuit
         else{
@@ -156,8 +165,9 @@ int main() {
       }
       //calcul le trajet si c'est uniquemnt en journée
       else{
-        prix_trajet = (temps_h*60 + temps_min)*TARIF_JOUR;
+        min_jour = temp_total_min;
       }
+   //si le départ est de nuit
    } else {
       //prix_trajet = nbr_km * TARIF_NUIT;
    }
