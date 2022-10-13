@@ -1,13 +1,14 @@
 /*
 -----------------------------------------------------------------------------------
-Nom du fichier :  labo_02_taxi_groupe_g.cpp
-Auteur(s) :       Bianchet Stefano, Léon Surbeck
-Classe :          PRG1B
-Date creation :   06.10.2022
-Description :     Un programme qui calcule le prix d'un taxi en fonction de la distance parcourue,
+Nom du fichier :  main.cpp
+Auteur(s)      :  Bianchet Stefano, Léon Surbeck, Hugo Germano
+Classe         :  PRG1B
+Date creation  :  06.10.2022
+Description    :  Un programme qui calcule le prix d'un taxi en fonction de la distance parcourue,
                   du nombre de bagages et de l'heure du trajet.
-Remarque(s) :     -
-Compilateur :     Mingw-w64 g++ 12.1.0
+Remarque(s)    :  -
+Modification(s):
+Compilateur    :  gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0
 -----------------------------------------------------------------------------------
 */
 #include <cstdlib>
@@ -62,13 +63,12 @@ int main() {
    double       prix_total;
    double       vitesse_moyenne;
    double       temps_trajets;
-   string       hour_depart;
-   string       minute_depart;
+   string       hour_depart;     //pour stocker en string l'entrée utilisateur
+   string       minute_depart;   //pour stocker en string l'entrée utilisateur minute
    // Affichage de 2 décimales après la virgule
    cout << fixed << setprecision(DECIMALES);
 
    // Présentation du programme à l'utilisateur
-
    cout << "Ce programme calcule le prix d'un taxi en fonction de la distance parcourue,"
            " du nombre de bagages et de l'heure du trajet." << endl;
    cout << endl;
@@ -80,6 +80,7 @@ int main() {
    cout << "Taxe par bagage   : "    << setw(LARGEUR) << TAXE_BAGAGE    << " Euros" << endl;
    cout << "Tarif jour        : "    << setw(LARGEUR) << TARIF_JOUR     << " Euros" << endl;
    cout << "Tarif nuit        : "    << setw(LARGEUR) << TARIF_NUIT     << " Euros" << endl;
+   //adaptation de l'affichage par rapport  l'heure/minute
    if(MINUTE_JOUR_MAX < 10 && MINUTE_JOUR_MIN < 10){
       cout << "Tarif jour        :   " << HEURE_JOUR_MIN << "h0" << MINUTE_JOUR_MIN <<" - " << HEURE_JOUR_MAX << "h0" << MINUTE_JOUR_MAX<< "" << endl << endl;
    }
@@ -132,9 +133,9 @@ int main() {
 
    cout << "Veuillez entrer l'heure de départ              [hh:mm]  : ";
 
-   getline(cin, hour_depart, ':');
+   getline(cin, hour_depart, ':');                 //prend les valeurs avant ':' ref : https://stackoverflow.com/questions/19036186/time-format-hhmmss-input
    getline(cin, minute_depart);
-   h_depart = stoi(hour_depart);
+   h_depart = stoi(hour_depart);                   //convertit string en int ref : https://www.freecodecamp.org/news/string-to-int-in-c-how-to-convert-a-string-to-an-integer-example/
    min_depart = stoi(minute_depart);
    
    // Calculs des sous-totaux
@@ -155,7 +156,7 @@ int main() {
 
    //vérifie et calcul si le départ est en journée
    if (h_depart >= HEURE_JOUR_MIN and h_depart <= HEURE_JOUR_MAX){
-      //verifications si le temps de trajet dépasse sur le temps de nuit -- (h_depart - HEURE_JOUR_MIN) + double(min_depart/60) + temps_h + double(temps_min/60)
+      //verifications si le temps de trajet dépasse sur le temps de nuit
       if(((h_depart - HEURE_JOUR_MIN)*60 + min_depart +  temp_total_min) > temps_journee){
         //minute pour la première journée
         min_jour = (HEURE_JOUR_MAX-HEURE_JOUR_MIN)*60 - (h_depart - HEURE_JOUR_MIN)*60;
@@ -193,10 +194,9 @@ int main() {
       else{
          min_nuit = temp_total_min;
       }
-      //prix_trajet = nbr_km * TARIF_NUIT;
    }
 
-   // Calcul du prix total
+   // Calcul du prix total du trajet de jour, nuit et total
    prix_trajet_jour = min_jour*TARIF_JOUR;
    prix_trajet_nuit = min_nuit*TARIF_NUIT;
    prix_trajet = prix_trajet_jour + prix_trajet_nuit; 
