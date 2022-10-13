@@ -38,19 +38,23 @@ int main() {
    const int    BAGAGE_MIN       = 0;
    const int    BAGAGE_MAX       = 4;
    const int    HEURE_JOUR_MIN   = 8;
+   const int    MINUTE_JOUR_MIN  = 0;
    const int    HEURE_JOUR_MAX   = 20;
+   const int    MINUTE_JOUR_MAX  = 0;
 
+
+   //déclaration des variables
    int          nbr_bagage;
    int          nbr_km;
-   int          h_depart;
-   int          min_depart;
-   int          h_arrivee;
-   int          min_arrivee;
-   int          temps_h;
-   int          temps_min;
-   int          temp_total_min;
-   int          min_jour;
-   int          min_nuit;
+   int          h_depart;        //l'heure de départ
+   int          min_depart;      //la minute de départ
+   int          h_arrivee;       //l'heure d'arrivée
+   int          min_arrivee;     //la minute d'arrivée
+   int          temps_h;         //l'heure du temps de trajet
+   int          temps_min;       //minute du temps de trajets
+   int          temp_total_min;  //temps du trajet en minutes
+   int          min_jour;        //total minutes de jour du trajet
+   int          min_nuit;        //total minutes de nuit du trajet
    double       prix_tot_bagages;
    double       prix_trajet;
    double       prix_total;
@@ -129,7 +133,7 @@ int main() {
    // Si l'heure de départ est entre 8h et 20h le tarif de jour est appliqué.
    // Dans le cas contraire, le tarif de nuit est appliqué.
 
-   //calcul le temps de trajet
+   //calcul le temps de trajet total en minutes
    temps_trajets = double(nbr_km/vitesse_moyenne);
    temps_h = trunc(temps_trajets);
    temps_min = round(double(temps_trajets - temps_h)*60);
@@ -145,6 +149,7 @@ int main() {
         if(temp_total_min - min_jour > (24 - HEURE_JOUR_MAX +HEURE_JOUR_MIN)*60 ){
 
         }
+        //si il ne dépasse passe pas, ajoute les minute à la nuit
         else{
          min_nuit = temp_total_min - min_jour;
         }
