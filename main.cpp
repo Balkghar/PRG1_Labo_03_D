@@ -52,8 +52,8 @@ int main() {
    int          temps_h;         //l'heure du temps de trajet
    int          temps_min;       //minute du temps de trajets
    int          temp_total_min;  //temps du trajet en minutes
-   int          min_jour;        //total minutes de jour du trajet
-   int          min_nuit;        //total minutes de nuit du trajet
+   int          min_jour= 0;        //total minutes de jour du trajet
+   int          min_nuit= 0;        //total minutes de nuit du trajet
    int          temps_journee;   //total minutes pour la journéee
    int          temps_nuit;      //total minutes pour la nuit
    double       prix_tot_bagages;
