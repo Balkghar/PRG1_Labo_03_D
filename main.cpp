@@ -31,6 +31,8 @@ int main() {
    const int    DECIMALES        = 2;
    const int    HEURE_MIN        = 0;
    const int    HEURE_MAX        = 23;
+   const int    MINUTE_MIN       = 0;
+   const int    MINUTE_MAX       = 59;
    const int    V_MAX            = 120;
    const int    V_MIN            = 50;
    const int    DISTANCE_MIN     = 0;
@@ -56,6 +58,7 @@ int main() {
    double       prix_total;
    double       vitesse_moyenne;
    double       temps_trajets;
+   char         double_point;
 
    // Affichage de 2 décimales après la virgule
    cout << fixed << setprecision(DECIMALES);
@@ -112,12 +115,20 @@ int main() {
       return EXIT_SUCCESS;
    }
 
-   cout << "Veuillez entrer l'heure de depart              ["
-        << HEURE_MIN << "-" << HEURE_MAX << "]: ";
-   cin  >> h_depart;
-   VIDER_BUFFER;
+   cout << "Veuillez entrer l'heure de depart              [hh:mm] : ";
+   cin  >> h_depart >> double_point >> min_depart;
 
    if (h_depart < HEURE_MIN or h_depart > HEURE_MAX){
+      cout << "Valeur incorrecte. Presser ENTER pour quitter" << endl;
+      VIDER_BUFFER;
+      return EXIT_SUCCESS;
+   }
+   if (min_depart < MINUTE_MIN or min_depart > MINUTE_MAX){
+      cout << "Valeur incorrecte. Presser ENTER pour quitter" << endl;
+      VIDER_BUFFER;
+      return EXIT_SUCCESS;
+   }
+   if (double_point != char(58)){
       cout << "Valeur incorrecte. Presser ENTER pour quitter" << endl;
       VIDER_BUFFER;
       return EXIT_SUCCESS;
@@ -178,5 +189,5 @@ int main() {
    VIDER_BUFFER;
 
    return EXIT_SUCCESS;
-   
+
 }
