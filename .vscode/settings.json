@@ -1,0 +1,12 @@
+{
+   "files.associations": {
+      "iostream": "cpp",
+      "limits": "cpp",
+      "*.tcc": "cpp",
+      "functional": "cpp",
+      "istream": "cpp",
+      "tuple": "cpp",
+      "string": "cpp",
+      "ostream": "cpp"
+   }
+}
