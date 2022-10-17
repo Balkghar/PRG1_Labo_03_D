@@ -63,8 +63,10 @@ int main() {
    double       prix_total;
    double       vitesse_moyenne;
    double       temps_trajets;
+
    string       hour_depart;     //pour stocker en string l'entrée utilisateur
    string       minute_depart;   //pour stocker en string l'entrée utilisateur minute
+
    // Affichage de 2 décimales après la virgule
    cout << fixed << setprecision(DECIMALES);
 
@@ -132,6 +134,7 @@ int main() {
    }
 
    cout << "Veuillez entrer l'heure de départ              [hh:mm]  : ";
+
 
    getline(cin, hour_depart, ':');                 //prend les valeurs avant ':' ref : https://stackoverflow.com/questions/19036186/time-format-hhmmss-input
    getline(cin, minute_depart);
@@ -223,5 +226,5 @@ int main() {
    VIDER_BUFFER;
 
    return EXIT_SUCCESS;
-   
+
 }
