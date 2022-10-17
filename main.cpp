@@ -52,8 +52,8 @@ int main() {
    int          temps_h;         //l'heure du temps de trajet
    int          temps_min;       //minute du temps de trajets
    int          temp_total_min;  //temps du trajet en minutes
-   int          min_jour= 0;        //total minutes de jour du trajet
-   int          min_nuit= 0;        //total minutes de nuit du trajet
+   int          min_jour= 0;     //total minutes de jour du trajet
+   int          min_nuit= 0;     //total minutes de nuit du trajet
    int          temps_journee;   //total minutes pour la journéee
    int          temps_nuit;      //total minutes pour la nuit
    double       prix_tot_bagages;
@@ -211,8 +211,8 @@ int main() {
    cout << "Prise en charge      : " << setw(LARGEUR) << TAXE_BASE         << " Euros" << endl;
    cout << "Supplements bagages  : " << setw(LARGEUR) << prix_tot_bagages  << " Euros" << endl;
    cout << "Temps de course      : " << endl;
-   cout << " - " << min_jour << " @ " << TARIF_JOUR << "        : " << prix_trajet_jour << " Euros"<< endl;
-   cout << " - " << min_nuit << " @ " << TARIF_NUIT << "        : " << prix_trajet_nuit << " Euros" << endl;
+   cout << " - " << min_jour << " @ " << TARIF_JOUR << setw(LARGEUR) << "        : " << prix_trajet_jour << " Euros"<< endl;
+   cout << " - " << min_nuit << " @ " << TARIF_NUIT << setw(LARGEUR) << "        : " << prix_trajet_nuit << " Euros" << endl;
    cout << "-----------------------------------" << endl;
    cout << "               TOTAL : " << setw(LARGEUR) << prix_total        << " Euros" << endl;
 
